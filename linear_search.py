@@ -43,6 +43,15 @@ def find_unknown_words(vocab, wds):
     return result
 
 
+def find_unknown_words_binary(vocab, wds):
+    """ Return a list of words in wds that do not occur in vocab. """
+    result = []
+    for w in wds:
+        if search_binary(vocab, w) < 0:
+            result.append(w)
+    return result
+
+
 def find_unknown_words_index(vocab, wds):
     """ Return a list of words in wds that do not occur in vocab using
         lists' index method as search function. """
@@ -64,10 +73,25 @@ def search_linear(xs, target):
             return i
     return -1
 
+
 def search_binary(xs, target):
     """ Find and return the index of target in sequence xs. """
     lb = 0
     ub = len(xs)
+    while True:
+        if lb == ub:
+            return -1
+
+        mid_index = (lb + ub) // 2
+        mid_item = xs[mid_index]
+
+        if mid_item == target:
+            return mid_index
+        elif mid_item < target:
+            lb = mid_index + 1
+        else:
+            ub = mid_index
+
 if __name__ == "__main__":
     friends = ["Joe", "Zoe", "Brad", "Angelina", "Zuki", "Thandi", "Paris"]
     test(search_linear(friends, "Zoe") == 1)
@@ -87,6 +111,12 @@ if __name__ == "__main__":
     print("{} words in bigger_vocab, and {} in book_words".format(len(bigger_vocab), len(book_words)))
 
     t0 = time.clock()
+    missing_words = find_unknown_words_binary(bigger_vocab, book_words)
+    t1 = time.clock()
+    print("There are {0} unknown words.".format(len(missing_words)))
+    print("That took {0:.4f} seconds using binary search algorithm.".format(t1 - t0))
+
+    t0 = time.clock()
     missing_words = find_unknown_words_index(bigger_vocab, book_words)
     t1 = time.clock()
     print("There are {0} unknown words.".format(len(missing_words)))
@@ -97,3 +127,5 @@ if __name__ == "__main__":
     t1 = time.clock()
     print("There are {0} unknown words.".format(len(missing_words)))
     print("That took {0:.4f} seconds using linear search algorithm.".format(t1 - t0))
+
+
